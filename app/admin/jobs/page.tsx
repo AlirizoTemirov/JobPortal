@@ -5,7 +5,9 @@ import { Job } from "@/types";
 export default async function page() {
   const supabase = await createClient();
 
-  const { data } = await supabase.from("Jobs").select("*");
+  const { data } = await supabase
+    .from("Jobs")
+    .select("*, category:Categories(id,name)");
 
   return (
     <div>

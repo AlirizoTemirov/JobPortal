@@ -10,14 +10,27 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Job } from "@/types";
+import { createClient } from "@/utils/supabase/client";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 interface JobProps {
   jobs: Job[];
 }
 
 export default function page({ jobs }: JobProps) {
-  console.log(jobs);
+  const supabase = createClient();
+  const router = useRouter();
+
+  const handleDelete = async (jobId: string) => {
+    try {
+      await supabase.from("Jobs").delete().eq("id", jobId);
+      router.refresh();
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <div>
@@ -53,7 +66,7 @@ export default function page({ jobs }: JobProps) {
                   <TableCell>{job.company}</TableCell>
                   <TableCell>
                     <div className="p-1 border rounded-md text-[12px] w-fit mx-auto">
-                      {job.categoryId}
+                      {job.category.name}
                     </div>
                   </TableCell>
                   <TableCell>
@@ -62,7 +75,11 @@ export default function page({ jobs }: JobProps) {
                     </div>
                   </TableCell>
                   <TableCell>
-                    <Button className="cursor-pointer" variant={"destructive"}>
+                    <Button
+                      onClick={() => handleDelete(job.id)}
+                      className="cursor-pointer"
+                      variant={"destructive"}
+                    >
                       Delete
                     </Button>
                   </TableCell>
