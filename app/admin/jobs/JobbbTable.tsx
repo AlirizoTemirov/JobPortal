@@ -13,7 +13,6 @@ import { Job } from "@/types";
 import { createClient } from "@/utils/supabase/client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 
 interface JobProps {
   jobs: Job[];

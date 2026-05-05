@@ -24,7 +24,11 @@ export type Category = {
 export type Applications = {
   id: string;
   created_at: string;
-  fullname: string;
+  fullName: string;
   email: string;
   jobId: string;
+  job: {
+    id: string;
+    title: string;
+  };
 };
