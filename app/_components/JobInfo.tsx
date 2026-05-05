@@ -1,10 +1,45 @@
+"use client";
+
 import { Job } from "@/types";
 import Header from "./Header";
 import { Button } from "@/components/ui/button";
 import { FaArrowLeftLong } from "react-icons/fa6";
 import Link from "next/link";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { useDetailPageStore } from "@/store/useDetailPageStore";
+import { Input } from "@/components/ui/input";
+import { createClient } from "@/utils/supabase/client";
+import { useRouter } from "next/navigation";
 
 export default function JobInfo({ job }: { job: Job }) {
+  const { modalOpen, setVisable, appliecFrom, changeForm, resetForm } =
+    useDetailPageStore();
+  const supabase = createClient();
+
+  const router = useRouter();
+
+  const handleSave = async () => {
+    try {
+      await supabase
+        .from("Applications")
+        .insert([{ ...appliecFrom, jobId: job.id }]);
+      router.refresh();
+      resetForm();
+      setVisable(false);
+    } catch (error) {
+      console.log();
+    }
+  };
+
   return (
     <div>
       <Header />
@@ -35,7 +70,12 @@ export default function JobInfo({ job }: { job: Job }) {
             </div>
           </div>
           <hr />
-          <Button className="px-10 py-5 mt-5 cursor-pointer">Apply Now</Button>
+          <Button
+            onClick={() => setVisable(true)}
+            className="px-10 py-5 mt-5 cursor-pointer"
+          >
+            Apply Now
+          </Button>
         </div>
 
         <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8 mt-10">
@@ -111,6 +151,48 @@ export default function JobInfo({ job }: { job: Job }) {
           </div>
         </div>
       </div>
+
+      <Dialog open={modalOpen} onOpenChange={() => setVisable(false)}>
+        <form>
+          <DialogContent className="sm:max-w-sm">
+            <DialogHeader>
+              <DialogTitle>Apply for Position</DialogTitle>
+              <DialogDescription>Apply to: {job.title}</DialogDescription>
+            </DialogHeader>
+
+            <div>
+              <div>
+                <p>Full Name</p>
+                <Input
+                  value={appliecFrom.fullName}
+                  onChange={(e) => changeForm("fullName", e.target.value)}
+                  className="mt-2"
+                  placeholder="John Doe"
+                />
+              </div>
+              <div className="mt-6">
+                <p>Email Address</p>
+                <Input
+                  value={appliecFrom.email}
+                  onChange={(e) => changeForm("email", e.target.value)}
+                  className="mt-2"
+                  placeholder="John@example.com"
+                />
+              </div>
+            </div>
+
+            <DialogFooter>
+              <Button
+                onClick={handleSave}
+                className="w-full py-5 cursor-pointer"
+                type="submit"
+              >
+                Submit Applications
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </form>
+      </Dialog>
     </div>
   );
 }
