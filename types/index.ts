@@ -8,7 +8,7 @@ export type Job = {
   categoryId: string;
   jobType: string;
   description: string;
-  requirements: string;
+  requirements: string[];
   category: {
     id: string;
     name: string;
