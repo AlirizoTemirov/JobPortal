@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Job } from "@/types";
+import Link from "next/link";
 
 interface JobBoxProps {
   job: Job;
@@ -15,7 +16,7 @@ export default function JobBox({ job }: JobBoxProps) {
         </div>
 
         <div className="w-10 h-10 rounded-md bg-black font-bold text-white flex justify-center items-center">
-          T
+          {job.company[0]}
         </div>
       </div>
 
@@ -50,9 +51,11 @@ export default function JobBox({ job }: JobBoxProps) {
         </div>
       </div>
 
-      <Button variant={"default"} className="w-full py-5 cursor-pointer mt-8">
-        View Deteils
-      </Button>
+      <Link href={`/jobs/${job.id}`}>
+        <Button variant={"default"} className="w-full py-5 cursor-pointer mt-8">
+          View Details
+        </Button>
+      </Link>
     </div>
   );
 }
