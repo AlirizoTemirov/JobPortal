@@ -7,13 +7,11 @@ import { FaArrowLeftLong } from "react-icons/fa6";
 import Link from "next/link";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { useDetailPageStore } from "@/store/useDetailPageStore";
 import { Input } from "@/components/ui/input";

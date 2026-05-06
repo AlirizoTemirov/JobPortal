@@ -1,13 +1,25 @@
 import { Button } from "@/components/ui/button";
+import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
-import React from "react";
 import { FaArrowLeftLong } from "react-icons/fa6";
+import LogoutButton from "@/app/_components/LogoutButton";
+import { redirect } from "next/navigation";
 
-export default function AdminLoyout({
+export default async function AdminLoyout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+
   return (
     <div className="flex">
       <div className="fixed left-0 border h-screen p-6">
@@ -49,6 +61,8 @@ export default function AdminLoyout({
               Go To Home Page
             </button>
           </Link>
+
+          <LogoutButton />
         </div>
       </div>
       <div className="ml-72 min-h-screen w-full bg-gray-100 p-10 overflow-y-auto">

@@ -20,7 +20,7 @@ export default function Header() {
             <p className="cursor-pointer hover:text-blue-900">Jobs</p>
           </Link>
 
-          <Link href={"/admin"}>
+          <Link href={"/admin/jobs"}>
             <Button className="cursor-pointer">Post a Job</Button>
           </Link>
         </div>
