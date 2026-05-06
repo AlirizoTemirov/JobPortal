@@ -2,6 +2,14 @@
 
 import { Button } from "@/components/ui/button";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
   Table,
   TableBody,
   TableCell,
@@ -9,17 +17,28 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useDetailPageStore } from "@/store/useDetailPageStore";
 import { Applications } from "@/types";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 interface AppliecProps {
   Appliec: Applications[];
 }
 
 export default function ApplicationsTable({ Appliec }: AppliecProps) {
+  const { modalOpen, setVisable } = useDetailPageStore();
   const supabase = createClient();
   const router = useRouter();
+
+  const [selectedApplication, setSelectedApplication] =
+    useState<Applications | null>(null);
+
+  const handleView = (application: Applications) => {
+    setSelectedApplication(application);
+    setVisable(true);
+  };
 
   const handleDelete = async (id: string) => {
     try {
@@ -54,9 +73,15 @@ export default function ApplicationsTable({ Appliec }: AppliecProps) {
                 <TableCell>{appliec.fullName}</TableCell>
                 <TableCell>{appliec.email}</TableCell>
                 <TableCell>{appliec.job.title}</TableCell>
-                <TableCell>{appliec.created_at}</TableCell>
                 <TableCell>
-                  <Button className="cursor-pointer mr-2" variant={"outline"}>
+                  {new Date(appliec.created_at).toDateString()}
+                </TableCell>
+                <TableCell>
+                  <Button
+                    onClick={() => handleView(appliec)}
+                    className="cursor-pointer mr-2"
+                    variant={"outline"}
+                  >
                     View
                   </Button>
                   <Button
@@ -72,6 +97,35 @@ export default function ApplicationsTable({ Appliec }: AppliecProps) {
           </TableBody>
         </Table>
       </div>
+
+      <Dialog open={modalOpen} onOpenChange={() => setVisable(false)}>
+        <form>
+          <DialogContent className="sm:max-w-sm">
+            <DialogHeader>
+              <DialogTitle>Application Deteils</DialogTitle>
+              <DialogDescription>
+                View the full application details
+              </DialogDescription>
+            </DialogHeader>
+
+            <div>
+              <p className="text-gray-500">NAME</p>
+              <p className="mt-1">{selectedApplication?.fullName}</p>
+
+              <p className="text-gray-500 mt-5">EMAIL</p>
+              <p className="mt-1">{selectedApplication?.email}</p>
+
+              <p className="text-gray-500 mt-5">JOB POSITION</p>
+              <p className="mt-1">{selectedApplication?.job.title}</p>
+
+              <p className="text-gray-500 mt-5">APPLIED DATE</p>
+              <p className="mt-1">
+                {new Date(selectedApplication!.created_at).toDateString()}
+              </p>
+            </div>
+          </DialogContent>
+        </form>
+      </Dialog>
     </div>
   );
 }
