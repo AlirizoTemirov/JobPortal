@@ -2,11 +2,13 @@ import { create } from "zustand";
 
 type FilterForm = {
   search: string;
+  search2: string;
   categoryFilter: string;
 };
 
 const initialState: FilterForm = {
   search: "",
+  search2: "",
   categoryFilter: "All Categories",
 };
 
