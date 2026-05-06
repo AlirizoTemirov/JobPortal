@@ -1,6 +1,6 @@
 import { createClient } from "@/utils/supabase/server";
 import JobsUI from "./JobsUI";
-import { Job } from "@/types";
+import { Category, Job } from "@/types";
 
 export default async function page() {
   const supabase = await createClient();
@@ -14,7 +14,10 @@ export default async function page() {
 
   return (
     <div>
-      <JobsUI jobs={JobsData as Job[]} />
+      <JobsUI
+        jobs={JobsData as Job[]}
+        categories={CategoriesData as Category[]}
+      />
     </div>
   );
 }

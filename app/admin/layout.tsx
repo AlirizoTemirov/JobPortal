@@ -23,12 +23,14 @@ export default async function AdminLoyout({
   return (
     <div className="flex">
       <div className="fixed left-0 border h-screen p-6">
-        <div className="flex items-center gap-2">
-          <div className="w-10 h-10 rounded-lg bg-blue-950 flex justify-center items-center text-white font-bold">
-            JP
+        <Link href={"/"}>
+          <div className="flex items-center gap-2">
+            <div className="w-10 h-10 rounded-lg bg-blue-950 flex justify-center items-center text-white font-bold">
+              JP
+            </div>
+            <h1 className="font-bold">JobPortal</h1>
           </div>
-          <h1 className="font-bold">JobPortal</h1>
-        </div>
+        </Link>
 
         <div className="mt-10 flex flex-col gap-3">
           <Link href={"/admin/jobs"}>

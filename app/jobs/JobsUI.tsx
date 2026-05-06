@@ -1,3 +1,5 @@
+"use client";
+
 import { Input } from "@/components/ui/input";
 import Header from "../_components/Header";
 import {
@@ -9,13 +11,30 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import JobBox from "./JobBox";
-import { Job } from "@/types";
+import { Category, Job } from "@/types";
+import { useFilterStore } from "@/store/useFilterStore";
 
 interface JobsUIProps {
   jobs: Job[];
+  categories: Category[];
 }
 
-export default function JobsUI({ jobs }: JobsUIProps) {
+export default function JobsUI({ jobs, categories }: JobsUIProps) {
+  const { changeForm, filterForm, resetForm } = useFilterStore();
+
+  const filteredJobs = jobs.filter((job) => {
+    const matchesSearch =
+      job.title.toLowerCase().includes(filterForm.search.toLowerCase()) ||
+      job.company.toLowerCase().includes(filterForm.search.toLowerCase()) ||
+      job.description.toLowerCase().includes(filterForm.search.toLowerCase());
+
+    const matchesCategory =
+      filterForm.categoryFilter === "All Categories" ||
+      job.category?.id === filterForm.categoryFilter;
+
+    return matchesSearch && matchesCategory;
+  });
+
   return (
     <div className="bg-gray-100">
       <Header />
@@ -34,34 +53,55 @@ export default function JobsUI({ jobs }: JobsUIProps) {
               <p className="text-[14px] text-gray-600 mb-1">
                 Search by keyword
               </p>
-              <Input placeholder="Job title, company or skills..." />
+              <Input
+                value={filterForm.search}
+                onChange={(e) => changeForm("search", e.target.value)}
+                placeholder="Job title, company or skills..."
+              />
             </div>
 
             <div className="mt-10">
               <p className="text-[14px] text-gray-600 mb-1">Category</p>
-              <Select>
+              <Select
+                value={filterForm.categoryFilter}
+                onValueChange={(value) => changeForm("categoryFilter", value)}
+                defaultValue="All Categories"
+              >
                 <SelectTrigger className="h-12 rounded-xl mt-2 w-full">
-                  <SelectValue placeholder="All Categories" />
+                  <SelectValue />
                 </SelectTrigger>
 
                 <SelectContent>
-                  <SelectItem value="Technology">Technology</SelectItem>
-                  <SelectItem value="Technology">Technology</SelectItem>
-                  <SelectItem value="Technology">Technology</SelectItem>
-                  <SelectItem value="Technology">Technology</SelectItem>
+                  <SelectItem value="All Categories">All Categories</SelectItem>
+                  {categories.map((category) => (
+                    <SelectItem key={category.id} value={category.id}>
+                      {category.name}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
 
             <Button
-              className="w-full py-3 cursor-pointer mt-10"
+              className="w-full py-3 cursor-pointer my-10"
               variant={"outline"}
+              onClick={() => resetForm()}
             >
               Reset Filters
             </Button>
 
-            <p className="text-[12px] text-gray-500 mt-10">
-              Category: All Categories
+            <p
+              className={`text-[12px] ${
+                filterForm.search.length === 0 ? "hidden" : ""
+              } text-gray-500`}
+            >
+              Search: "{filterForm.search}"
+            </p>
+
+            <p className="text-[12px] text-gray-500 mt-1">
+              Category:{" "}
+              {categories.find((c) => c.id === filterForm.categoryFilter)
+                ?.name || "All Categories"}
             </p>
           </div>
 
@@ -74,7 +114,7 @@ export default function JobsUI({ jobs }: JobsUIProps) {
             </div>
 
             <div className="mt-5 flex flex-col gap-4">
-              {jobs?.map((job) => (
+              {filteredJobs?.map((job) => (
                 <JobBox key={job.id} job={job} />
               ))}
             </div>
