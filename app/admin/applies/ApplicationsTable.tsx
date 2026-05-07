@@ -119,9 +119,9 @@ export default function ApplicationsTable({ Appliec }: AppliecProps) {
               <p className="mt-1">{selectedApplication?.job.title}</p>
 
               <p className="text-gray-500 mt-5">APPLIED DATE</p>
-              <p className="mt-1">
-                {new Date(selectedApplication!.created_at).toDateString()}
-              </p>
+              {selectedApplication && (
+                <p className="mt-1">{selectedApplication.created_at}</p>
+              )}
             </div>
           </DialogContent>
         </form>
